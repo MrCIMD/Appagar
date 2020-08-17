@@ -1,0 +1,7 @@
+{
+  "name": "front-end-movil",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
