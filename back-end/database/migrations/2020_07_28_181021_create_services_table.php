@@ -18,7 +18,6 @@ class CreateServicesTable extends Migration
             $table->string('name');
             $table->string('description');
             $table->integer('period');
-            $table->bigInteger('time')->default(0);
             $table->timestamps();
             $table->softDeletes('deleted_at');
         });

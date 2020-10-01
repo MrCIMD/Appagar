@@ -14,65 +14,26 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
+Route::apiResources([
+    'actions'   => 'ActionController',
+    'histories' => 'HistoryController',
+    'reports'   => 'ReportController',
+    'services'  => 'ServiceController',
+    'tickets'   => 'TicketController'
+]);
 
-Route::post('register', 'UserController@register');
+// Route::middleware('auth:api')->get('/user', function (Request $request) {
+//     return $request->user();
+// });
 
-Route::post('login', 'UserController@authenticate');
 
-// ACTIONS
-Route::get('/actions', 'ActionController@GetActions');
 
-Route::get('/actions/{id?}', 'ActionController@GetAction');
+// Route::post('register', 'UserController@register');
 
-Route::post('/actions', 'ActionController@PostAction');
+// Route::post('login', 'UserController@authenticate');
 
-Route::patch('/actions/{id?}', 'ActionController@PatchAction');
 
-Route::delete('/actions/{id?}', 'ActionController@DeleteAction');
-// HISTORIES
-Route::get('/histories', 'HistoryController@GetHistories');
 
-Route::get('/histories/{id?}', 'HistoryController@GetHistory');
-
-Route::post('/histories', 'HistoryController@PostHistory');
-
-Route::patch('/histories/{id?}', 'HistoryController@PatchHistory');
-
-Route::delete('/histories/{id?}', 'HistoryController@DeleteHistory');
-// REPORTS
-Route::get('/reports', 'ReportController@GetReports');
-
-Route::get('/reports/{id?}', 'ReportController@GetReport');
-
-Route::post('/reports', 'ReportController@PostReport');
-
-Route::patch('/reports/{id?}', 'ReportController@PatchReport');
-
-Route::delete('/reports/{id?}', 'ReportController@DeleteReport');
-// SERVICES
-Route::get('/services', 'ServiceController@GetServices');
-
-Route::get('/services/{id?}', 'ServiceController@GetService');
-
-Route::post('/services', 'ServiceController@PostService');
-
-Route::patch('/services/{id?}', 'ServiceController@PatchService');
-
-Route::delete('/services/{id?}', 'ServiceController@DeleteService');
-// TICKETS
-Route::get('/tickets', 'TicketController@GetTickets');
-
-Route::get('/tickets/{id?}', 'TicketController@GetTicket');
-
-Route::post('/tickets', 'TicketController@PostTicket');
-
-Route::patch('/tickets/{id?}', 'TicketController@PatchTicket');
-
-Route::delete('/tickets/{id?}', 'TicketController@DeleteTicket');
-
-Route::group(['middleware' => ['jwt.verify']], function() {
-    /*AÑADE AQUI LAS RUTAS QUE QUIERAS PROTEGER CON JWT*/
-});
+// Route::group(['middleware' => ['jwt.verify']], function () {
+//     /*AÑADE AQUI LAS RUTAS QUE QUIERAS PROTEGER CON JWT*/
+// });

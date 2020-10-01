@@ -7,46 +7,78 @@ use Illuminate\Http\Request;
 
 class ActionController extends Controller
 {
-    public function GetActions(){
-        $actions = Action::get();
+    /**
+     * Display a listing of the resource.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function index(Request $request)
+    {
+        $actions = Action::search($request->search)->get();
         return response()->json(['success' => true, 'data' => $actions], 200);
     }
 
-    public function GetAction(Int $id){
-        $action = Action::find($id);
-        if ($action) {
-            return response()->json(['success' => true, 'data' => $action], 200);
-        } else {
-            return response()->json(['success' => false, 'data' => $action], 404);
-        }
-    }
-
-    public function PostAction(Request $request){
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request)
+    {
         $action = new Action();
         $action->name = $request->name;
         $action->description = $request->description;
-        $action->save();
-        return response()->json(['success' => true, 'data' => $action], 201);
-    }
-
-    public function PatchAction(Request $request, Int $id){
-        $action = Action::find($id);
-        if ($action) {
-            $action->name = $request->name;
-            $action->description = $request->description;
-            $action->save();
-            return response()->json(['success' => true, 'data' => $action], 200);
-        } else {
-            return response()->json(['success' => false, 'data' => $action], 404);
+        if ($action->save()) {
+            return response()->json(['success' => true, 'data' => $action], 201);
         }
     }
 
-    public function DeleteAction(Int $id){
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show($id)
+    {
+        $action = Action::find($id);
+        if (is_null($action)) {
+            return response()->json(['success' => false, 'error' => 'No existe'], 404);
+        }
+        return response()->json(['success' => true, 'data' => $action], 200);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, $id)
+    {
+        $action = Action::find($id);
+        $action->name = $request->name;
+        $action->description = $request->description;
+        if ($action->save()) {
+            return response()->json(['success' => true, 'data' => $action], 200);
+        }
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($id)
+    {
         $action = Action::find($id);
         if ($action->delete()) {
-            return response()->json(['success' => true], 200);
-        } else {
-            return response()->json(['success' => false], 404);
+            return response()->json(['success' => true, 'deleted' => $action], 200);
         }
+        return response()->json(['success' => false, 'error' => 'No existe'], 404);
     }
 }

@@ -7,49 +7,83 @@ use Illuminate\Http\Request;
 
 class ReportController extends Controller
 {
-    public function GetReports(){
-        $reports = Report::get();
+    /**
+     * Display a listing of the resource.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function index(Request $request)
+    {
+        $reports = Report
+            ::search($request->search)
+            ->searchUser($request->user)
+            ->with(['user'])->get();
         return response()->json(['success' => true, 'data' => $reports], 200);
     }
 
-    public function GetReport(Int $id){
-        $reports = Report::find($id);
-        if ($reports) {
-            return response()->json(['success' => true, 'data' => $reports], 200);
-        } else {
-            return response()->json(['success' => false, 'data' => $reports], 404);
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request)
+    {
+        $report = new Report();
+        $report->id_user = $request->id_user;
+        $report->name = $request->name;
+        $report->rute = $request->rute;
+        if ($report->save()) {
+            return response()->json(['success' => true, 'data' => $report], 201);
         }
     }
 
-    public function PostReport(Request $request){
-        $reports = new Report();
-        $reports->id_user = $request->id_user;
-        $reports->name = $request->name;
-        // PROCESO DE GENERACIÓN DE REPORTE
-        $reports->rute = $request->rute;
-        $reports->save();
-        return response()->json(['success' => true, 'data' => $reports], 201);
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show($id)
+    {
+        $report = Report::find($id);
+        if (is_null($report)) {
+            return response()->json(['success' => false, 'error' => 'No existe'], 404);
+        }
+        return response()->json(['success' => true, 'data' => $report], 200);
     }
 
-    public function PatchReport(Request $request, Int $id){
-        $reports = Report::find($id);
-        if ($reports) {
-            $reports->id_user = $request->id_user;
-            $reports->name = $request->name;
-            $reports->rute = $request->rute;
-            $reports->save();
-            return response()->json(['success' => true, 'data' => $reports], 200);
-        } else {
-            return response()->json(['success' => false, 'data' => $reports], 404);
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, $id)
+    {
+        $report = Report::find($id);
+        $report->id_user = $request->id_user;
+        $report->name = $request->name;
+        $report->rute = $request->rute;
+        if ($report->save()) {
+            return response()->json(['success' => true, 'data' => $report], 200);
         }
     }
 
-    public function DeleteReport(Int $id){
-        $reports = Report::find($id);
-        if ($reports->delete()) {
-            return response()->json(['success' => true], 200);
-        } else {
-            return response()->json(['success' => false], 404);
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($id)
+    {
+        $report = Report::find($id);
+        if ($report->delete()) {
+            return response()->json(['success' => true, 'deleted' => $report], 200);
         }
+        return response()->json(['success' => false, 'error' => 'No existe'], 404);
     }
 }
