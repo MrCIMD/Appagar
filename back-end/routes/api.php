@@ -14,26 +14,22 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::apiResources([
-    'actions'   => 'ActionController',
-    'histories' => 'HistoryController',
-    'reports'   => 'ReportController',
-    'services'  => 'ServiceController',
-    'tickets'   => 'TicketController'
-]);
+Route::group(
+    ['middleware' => 'api', 'prefix' => 'auth'],
+    function ($router) {
+        Route::post('login', 'UserController@login');
+        Route::post('register', 'UserController@register');
+        Route::post('logout', 'UserController@logout');
+        Route::post('refresh', 'UserController@refresh');
+    }
+);
 
-// Route::middleware('auth:api')->get('/user', function (Request $request) {
-//     return $request->user();
-// });
-
-
-
-// Route::post('register', 'UserController@register');
-
-// Route::post('login', 'UserController@authenticate');
-
-
-
-// Route::group(['middleware' => ['jwt.verify']], function () {
-//     /*AÑADE AQUI LAS RUTAS QUE QUIERAS PROTEGER CON JWT*/
-// });
+Route::group(['middleware' => ['jwt.verify']], function () {
+    Route::apiResources([
+        'actions'   => 'ActionController',
+        'histories' => 'HistoryController',
+        'reports'   => 'ReportController',
+        'services'  => 'ServiceController',
+        'tickets'   => 'TicketController'
+    ]);
+});

@@ -2,44 +2,50 @@
 
 namespace App\Http\Controllers;
 
-use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
+use JWTAuth;
+use App\User;
 
 class UserController extends Controller
 {
-    public function authenticate(Request $request)
+
+    /**
+     * Create a new AuthController instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('jwt.verify', ['except' => ['login', 'register']]);
+    }
+
+    /**
+     * Get a JWT via given credentials.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function login(Request $request)
     {
         $credentials = $request->only('email', 'password');
         try {
-            if (! $token = JWTAuth::attempt($credentials)) {
-                return response()->json(['error' => 'invalid_credentials'], 400);
+            if (!$token = JWTAuth::attempt($credentials)) {
+                return response()->json(['error' => 'Credenciales no válidas'], 400);
             }
         } catch (JWTException $e) {
-            return response()->json(['error' => 'could_not_create_token'], 500);
+            return response()->json(['error' => 'No se pudo crear el token'], 500);
         }
-        return response()->json(compact('token'));
+        $user = JWTAuth::user();
+        return $this->buildToken($token, $user);
     }
 
-    public function getAuthenticatedUser()
-    {
-        try {
-            if (!$user = JWTAuth::parseToken()->authenticate()) {
-                    return response()->json(['user_not_found'], 404);
-            }
-        } catch (Tymon\JWTAuth\Exceptions\TokenExpiredException $e) {
-                return response()->json(['token_expired'], $e->getStatusCode());
-        } catch (Tymon\JWTAuth\Exceptions\TokenInvalidException $e) {
-                return response()->json(['token_invalid'], $e->getStatusCode());
-        } catch (Tymon\JWTAuth\Exceptions\JWTException $e) {
-                return response()->json(['token_absent'], $e->getStatusCode());
-        }
-        return response()->json(compact('user'));
-    }
-
+    /**
+     * Register a User.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -48,8 +54,8 @@ class UserController extends Controller
             'password' => 'required|string|min:6|confirmed',
         ]);
 
-        if($validator->fails()){
-                return response()->json($validator->errors()->toJson(), 400);
+        if ($validator->fails()) {
+            return response()->json($validator->errors()->toJson(), 400);
         }
 
         $user = User::create([
@@ -57,9 +63,42 @@ class UserController extends Controller
             'email' => $request->get('email'),
             'password' => Hash::make($request->get('password')),
         ]);
-
         $token = JWTAuth::fromUser($user);
+        return $this->buildToken($token, $user);
+    }
 
-        return response()->json(compact('user','token'),201);
+    /**
+     * Log the user out (Invalidate the token).
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function logout()
+    {
+        JWTAuth::invalidate(JWTAuth::getToken());
+        return response()->json(['message' => 'El usuario se desconectó correctamente']);
+    }
+
+    /**
+     * Refresh user token
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function refresh()
+    {
+        $token = JWTAuth::getToken();
+        $token = JWTAuth::refresh($token);
+        $user = JWTAuth::user();
+        return $this->buildToken($token, $user);
+    }
+
+    /**
+     * Build Token authentication
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    private function buildToken($token, $user)
+    {
+        $expiration = JWTAuth::setToken($token)->getPayload()->get('exp') * 1000;
+        return response()->json(compact('user', 'token', 'expiration'), 200);
     }
 }
