@@ -1,0 +1,31 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Registro</ion-title>
+    <ion-buttons slot="end">
+      <ion-back-button defaultHref="/"></ion-back-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="content-logo">
+    <img src="assets/appagar.png" class="logo-login" alt="">
+  </div>
+  <ion-list>
+    <ion-item>
+      <ion-label position="stacked">Nombre completo.</ion-label>
+      <ion-input color="primary" type="text"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="stacked">Correo electrónico.</ion-label>
+      <ion-input color="primary" type="email"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="stacked">Contraseña.</ion-label>
+      <ion-input color="primary" type="password"></ion-input>
+    </ion-item>
+  </ion-list>
+  <ion-button class="logo mt-2" routerLink="/dashboard" expand="block" shape="round" color="primary" fill="outline">
+    Crear</ion-button>
+  <app-social-banner></app-social-banner>
+</ion-content>
