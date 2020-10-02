@@ -8,9 +8,10 @@ import { StatusBar } from "@ionic-native/status-bar/ngx";
 
 import { AppComponent } from "./components/app/app.component";
 import { AppRoutingModule } from "./app-routing.module";
+import { DashboardPage } from "./app/dashboard/dashboard.page";
 
 @NgModule({
-  declarations: [AppComponent],
+  declarations: [AppComponent, DashboardPage],
   entryComponents: [],
   imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule],
   providers: [
