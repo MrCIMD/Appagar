@@ -7,31 +7,37 @@ const routes: Routes = [
     loadChildren: () =>
       import("./menu/menu.module").then((m) => m.MenuPageModule),
   },
+  {
+    path: "entry",
+    loadChildren: () =>
+      import("./entry/entry.module").then((m) => m.EntryPageModule),
+  },
+  {
+    path: "egress",
+    loadChildren: () =>
+      import("./egress/egress.module").then((m) => m.EgressPageModule),
+  },
+  {
+    path: "history",
+    loadChildren: () =>
+      import("./history/history.module").then((m) => m.HistoryPageModule),
+  },
+  {
+    path: "report",
+    loadChildren: () =>
+      import("./report/report.module").then((m) => m.ReportPageModule),
+  },
+  {
+    path: "service",
+    loadChildren: () =>
+      import("./service/service.module").then((m) => m.ServicePageModule),
+  },
+  {
+    path: "tool",
+    loadChildren: () =>
+      import("./tool/tool.module").then((m) => m.ToolPageModule),
+  },
   { path: "**", pathMatch: "full", redirectTo: "menu" },
-  {
-    path: 'entry',
-    loadChildren: () => import('./entry/entry.module').then( m => m.EntryPageModule)
-  },
-  {
-    path: 'egress',
-    loadChildren: () => import('./egress/egress.module').then( m => m.EgressPageModule)
-  },
-  {
-    path: 'history',
-    loadChildren: () => import('./history/history.module').then( m => m.HistoryPageModule)
-  },
-  {
-    path: 'report',
-    loadChildren: () => import('./report/report.module').then( m => m.ReportPageModule)
-  },
-  {
-    path: 'service',
-    loadChildren: () => import('./service/service.module').then( m => m.ServicePageModule)
-  },
-  {
-    path: 'tool',
-    loadChildren: () => import('./tool/tool.module').then( m => m.ToolPageModule)
-  },
 ];
 
 @NgModule({

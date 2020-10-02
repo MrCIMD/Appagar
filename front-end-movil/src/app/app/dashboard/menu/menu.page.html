@@ -1,3 +1,9 @@
 <ion-content>
-  <h3>Hola mundo</h3>
+  <h5>Tu dinero:</h5>
+  <div class="options">
+    <button type="button" class="option-menu" [routerLink]="option.rute" *ngFor="let option of menu">
+      <ion-icon [name]="option.icon"></ion-icon>
+      <p>{{option.name}}</p>
+    </button>
+  </div>
 </ion-content>
